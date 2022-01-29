@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "org.hyperskill.stopwatch"
-        minSdkVersion 19
+        minSdkVersion 21
         // DO NOT CHANGE THIS VALUE
         // Because this version related with robolectic version too
         // noinspection OldTargetApi,ExpiredTargetSdkVersion

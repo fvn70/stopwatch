@@ -1,9 +1,13 @@
 package org.hyperskill.stopwatch
 
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.concurrent.thread
@@ -12,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     val textView: TextView by lazy { findViewById(R.id.textView) }
     val startButton: Button by lazy { findViewById(R.id.startButton) }
     val resetButton: Button by lazy { findViewById(R.id.resetButton) }
+    val progressBar: ProgressBar by lazy { findViewById(R.id.progressBar) }
     var time = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,12 +28,18 @@ class MainActivity : AppCompatActivity() {
         val startWatch: Runnable = object : Runnable {
             override fun run() {
                 time++
+                if (time % 2 == 0) {
+                    progressBar.indeterminateTintList = ColorStateList.valueOf(Color.CYAN)
+                } else {
+                    progressBar.indeterminateTintList = ColorStateList.valueOf(Color.GREEN)
+                }
                 textView.text = String.format("%02d:%02d", time / 60, time % 60)
                 handler.postDelayed(this, 1000)
             }
         }
 
         startButton.setOnClickListener {
+            progressBar.visibility = ProgressBar.VISIBLE
             if (time == 0) {
                 thread {
                     handler.postDelayed(startWatch, 1000)
@@ -37,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         resetButton.setOnClickListener {
+            progressBar.visibility = ProgressBar.INVISIBLE
             handler.removeCallbacks(startWatch)
             time = 0
             textView.text = "00:00"
