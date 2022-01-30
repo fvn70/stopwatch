@@ -3,7 +3,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
+    viewBinding {
+        enabled true
+    }
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId "org.hyperskill.stopwatch"
@@ -11,7 +14,7 @@ android {
         // DO NOT CHANGE THIS VALUE
         // Because this version related with robolectic version too
         // noinspection OldTargetApi,ExpiredTargetSdkVersion
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 2
         versionName "1.1"
         testInstrumentationRunner "com.edu.AndroidEduTestRunner"
@@ -22,6 +25,13 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 }
 
