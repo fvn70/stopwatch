@@ -1,8 +1,12 @@
 package org.hyperskill.stopwatch
 
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,7 +16,11 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 import kotlin.concurrent.thread
+
+const val CHANNEL_ID = "org.hyperskill"
+const val NOTIF_ID = 393939
 
 class MainActivity : AppCompatActivity() {
     val textView: TextView by lazy { findViewById(R.id.textView) }
@@ -31,8 +39,9 @@ class MainActivity : AppCompatActivity() {
 
         val startWatch: Runnable = object : Runnable {
             override fun run() {
-                if (time >= upperLimit) {
-                    textView.setTextColor(ColorStateList.valueOf(Color.RED))
+                if (time == upperLimit) {
+                    textView.setTextColor(Color.RED)
+                    addNotification()
                 }
                 time++
                 if (time % 2 == 0) {
@@ -58,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         resetButton.setOnClickListener {
             progressBar.visibility = ProgressBar.INVISIBLE
             settingsButton.isEnabled = true
-            textView.setTextColor(ColorStateList.valueOf(Color.BLACK))
+            textView.setTextColor(Color.BLACK)
             handler.removeCallbacks(startWatch)
             time = 0
             textView.text = "00:00"
@@ -76,6 +85,32 @@ class MainActivity : AppCompatActivity() {
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
         }
+    }
+
+    fun addNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Notification"
+            val descriptionText = "Your notification"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle("Notification")
+            .setContentText("Time exceeded")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+
+        val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(NOTIF_ID, notificationBuilder.build())
     }
 
 }
